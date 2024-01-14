@@ -38,6 +38,7 @@ async def main():
         ssl_ca_certs=veles_config.cfg.tls.ca,
         ssl_certfile=veles_config.cfg.tls.cert,
         ssl_keyfile=veles_config.cfg.tls.key,
+        host="0.0.0.0",
         port=veles_config.cfg.port
     )
 
