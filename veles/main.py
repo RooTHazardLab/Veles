@@ -20,7 +20,7 @@ async def notification(req: fastapi.Request):
     Under development
     """
 
-    print(req)
+    print(req.headers)
 
     return {"message": "kek"}
 
