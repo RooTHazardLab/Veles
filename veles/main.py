@@ -4,7 +4,6 @@ For now nothing interesting
 """
 
 import os
-import ssl
 import asyncio
 
 import uvicorn
@@ -30,14 +29,10 @@ async def main():
     Veles bot for now just start serving
     """
 
-    veles_config = config.VelesConfig(os.environ["VELES_CONFIG_DIR"])
+    veles_config = config.VelesConfig(os.environ["SERVICE_CONFIG_DIR"])
 
     notificaton_config = uvicorn.Config(
         "main:veles_api",
-        ssl_cert_reqs=ssl.CERT_REQUIRED,
-        ssl_ca_certs=veles_config.cfg.tls.ca,
-        ssl_certfile=veles_config.cfg.tls.server_cert,
-        ssl_keyfile=veles_config.cfg.tls.server_key,
         host="0.0.0.0",
         port=veles_config.cfg.port
     )
