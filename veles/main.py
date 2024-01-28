@@ -29,12 +29,14 @@ async def main():
     Veles bot for now just start serving
     """
 
-    veles_config = config.VelesConfig(os.environ["SERVICE_CONFIG_DIR"])
+    veles_config = config.VelesConfig(
+        f'{os.environ["SERVICE_CONFIG_DIR"]}/config.yaml'
+    )
 
     notificaton_config = uvicorn.Config(
         "main:veles_api",
-        host="0.0.0.0",
-        port=veles_config.cfg.port
+        host=veles_config.cfg.server.host,
+        port=veles_config.cfg.server.port
     )
 
     notification_server = uvicorn.Server(notificaton_config)

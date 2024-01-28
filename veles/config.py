@@ -5,47 +5,12 @@ Configuration file entities models
 import typing
 import pydantic
 
-import yaml
+import roothazardlib.configs
 
-class TLSConfigModel(pydantic.BaseModel):
-    """
-    A Pydantic model representing the TLS configuration for a server.
-
-    Attributes:
-        cert (pydantic.FilePath): Path to the TLS certificate file.
-        key (pydantic.FilePath): Path to the TLS private key file.
-        ca (pydantic.FilePath): Path to the TLS certificate authority file.
-
-    Methods:
-        __setattr__(self, _: str, __: typing.Any) -> None:
-            Overrides the default __setattr__ method to make the object readonly.
-            Raises an AttributeError if any attempt is made to modify the object.
-
-    Note:
-        This class is a Pydantic BaseModel, providing data validation and parsing.
-        The object is made readonly, preventing modifications after instantiation.
-    """
-
-    client_cert: pydantic.FilePath
-    client_key: pydantic.FilePath
-    ca: pydantic.FilePath
-
-    def __setattr__(self, _: str, __: typing.Any) -> None:
-        """
-        Override the default __setattr__ method to make the object readonly.
-
-        Args:
-            _: Ignored parameter.
-            __: Ignored parameter.
-
-        Raises:
-            AttributeError: If any attempt is made to modify the object.
-        """
-
-        raise AttributeError("Object is readonly")
-
-
-class TopSectionsConfigModel(pydantic.BaseModel):
+class TopSectionsConfigModel(
+    roothazardlib.configs.ConstModel,
+    pydantic.BaseModel
+):
     """
     A Pydantic model representing the configuration for top sections.
 
@@ -64,25 +29,14 @@ class TopSectionsConfigModel(pydantic.BaseModel):
         The object is made readonly, preventing modifications after instantiation.
     """
 
-    port: pydantic.PositiveInt
-    tls: TLSConfigModel
-
-    def __setattr__(self, _: str, __: typing.Any) -> None:
-        """
-        Override the default __setattr__ method to make the object readonly.
-
-        Args:
-            _: Ignored parameter.
-            __: Ignored parameter.
-
-        Raises:
-            AttributeError: If any attempt is made to modify the object.
-        """
-
-        raise AttributeError("Object is readonly")
+    server: roothazardlib.configs.ServerConfigModel
+    tls: roothazardlib.configs.TLSConfigModel
 
 
-class VelesConfigModel(pydantic.BaseModel):
+class VelesConfigModel(
+    roothazardlib.configs.ConstModel,
+    roothazardlib.configs.ConfigModel
+):
     """
     A Pydantic model representing the configuration for the Njordr application.
 
@@ -108,60 +62,10 @@ class VelesConfigModel(pydantic.BaseModel):
 
     cfg: TopSectionsConfigModel
 
-    def __setattr__(self, _: str, __: typing.Any) -> None:
-        """
-        Override the default __setattr__ method to make the object readonly.
 
-        Args:
-            _: Ignored parameter.
-            __: Ignored parameter.
-
-        Raises:
-            AttributeError: If any attempt is made to modify the object.
-        """
-
-        raise AttributeError("Object is readonly")
-
-
-class Singletone(type):
+class VelesConfig(roothazardlib.configs.YamlConfig): # pylint: disable=too-few-public-methods
     """
-    Singletone metaclass for making singletones
+    Njordr specific config
     """
 
-    __instances: dict[type, typing.Any] = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls.__instances:
-            cls.__instances[cls] = super().__call__(*args, **kwargs)
-
-        return cls.__instances[cls]
-
-
-class VelesConfig(metaclass=Singletone):
-    """
-    VelesConfig singletone
-    """
-
-    __model: typing.Optional[VelesConfigModel] = None
-
-    def __init__(self, config_dir: typing.Optional[str]) -> None:
-        if self.__model is None:
-            with open(f"{config_dir}/config.yaml", mode="r", encoding="utf-8") as config_file:
-                config_obj = yaml.safe_load(config_file)
-
-            for key, value in config_obj["tls"].items():
-                config_obj["tls"][key] = f"{config_dir}/{value}"
-
-            self.__model = VelesConfigModel(cfg=config_obj)
-
-    def __setattr__(self, name: str, value: typing.Any) -> None:
-        if "__" in name:
-            super().__setattr__(name, value)
-        else:
-            raise AttributeError("Object is readonly")
-
-    def __getattribute__(self, name: str) -> typing.Any:
-        if "__" in name:
-            return super().__getattribute__(name)
-
-        return getattr(self.__model, name)
+    _model: typing.Optional[VelesConfigModel]
