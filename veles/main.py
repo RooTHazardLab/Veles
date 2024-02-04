@@ -14,7 +14,7 @@ import config
 veles_api = fastapi.FastAPI()
 
 @veles_api.get("/")
-async def notification(req: fastapi.Request):
+async def root(req: fastapi.Request):
     """
     Under development
     """
