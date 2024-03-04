@@ -4,13 +4,16 @@ For now nothing interesting
 """
 
 import os
+import json
 import asyncio
+import logging.config
 
 import uvicorn
 import fastapi
 
 import config
 
+logger = logging.getLogger("veles")
 veles_api = fastapi.FastAPI()
 
 @veles_api.get("/")
@@ -19,12 +22,13 @@ async def root(req: fastapi.Request):
     Under development
     """
 
-    print(req.headers)
+    logger.info(req.headers)
 
     return {"message": "kek"}
 
 
-async def main():
+
+async def veles():
     """
     Veles bot for now just start serving
     """
@@ -43,5 +47,21 @@ async def main():
     await asyncio.create_task(notification_server.serve())
 
 
+def main():
+    """Run async veles service"""
+
+    with open(
+        "veles/logging_config.json",
+        encoding="utf-8"
+    ) as logging_cgf_fd:
+        logging_cfg = json.load(logging_cgf_fd)
+
+    logging.config.dictConfig(logging_cfg)
+
+    coroutine = veles()
+
+    asyncio.run(coroutine)
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
