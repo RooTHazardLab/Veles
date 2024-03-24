@@ -4,3 +4,4 @@ veles.egg-info
 .mypy_cache
 dist
 veles_config
+veles.sqlite

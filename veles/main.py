@@ -1,6 +1,5 @@
 """
 Veles bot
-For now nothing interesting
 """
 
 import os
@@ -10,23 +9,28 @@ import logging.config
 
 import uvicorn
 import fastapi
+import fastapi.middleware.cors as cors_middleware
 
 import config
+
+import funds.routes
 
 logger = logging.getLogger("veles")
 veles_api = fastapi.FastAPI()
 
-@veles_api.get("/")
-async def root(req: fastapi.Request):
-    """
-    Under development
-    """
+veles_api.include_router(funds.routes.router)
 
-    logger.info(req.headers)
+origins = [
+    "*",
+]
 
-    return {"message": "kek"}
-
-
+veles_api.add_middleware(
+    cors_middleware.CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def veles():
     """
@@ -37,14 +41,14 @@ async def veles():
         f'{os.environ["SERVICE_CONFIG_DIR"]}/config.yaml'
     )
 
-    notificaton_config = uvicorn.Config(
+    veles_api_config = uvicorn.Config(
         "main:veles_api",
         host=veles_config.cfg.server.host,
         port=veles_config.cfg.server.port
     )
 
-    notification_server = uvicorn.Server(notificaton_config)
-    await asyncio.create_task(notification_server.serve())
+    veles_api_server = uvicorn.Server(veles_api_config)
+    await asyncio.create_task(veles_api_server.serve())
 
 
 def main():
