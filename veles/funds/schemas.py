@@ -8,8 +8,15 @@ class FundResponseSchema(pydantic.BaseModel):
     capacity: int | None
 
 
-class FundRequestSchema(pydantic.BaseModel):
+class FundPostRequestSchema(pydantic.BaseModel):
     name: str
+    replenishment_bottom_limit: int | None
+    total_expense_percentage: float | None
+    capacity: int | None
+
+
+class FundPatchRequestSchema(pydantic.BaseModel):
+    id: int
     replenishment_bottom_limit: int | None
     total_expense_percentage: float | None
     capacity: int | None
