@@ -26,3 +26,14 @@ async def post_funds(
     db_session.commit()
 
     return new_fund
+
+
+@router.delete("/{fund_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
+async def delete_funds(
+    fund_id: int,
+    db_session=fastapi.Depends(database.get_session)
+):
+    fund = db_session.query(models.FundModel).get(fund_id)
+
+    db_session.delete(fund)
+    db_session.commit()
