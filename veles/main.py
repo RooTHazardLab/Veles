@@ -14,11 +14,13 @@ import fastapi.middleware.cors as cors_middleware
 import config
 
 import funds.routes
+import targets.routes
 
 logger = logging.getLogger("veles")
 veles_api = fastapi.FastAPI()
 
 veles_api.include_router(funds.routes.router)
+veles_api.include_router(targets.routes.router)
 
 origins = [
     "*",

@@ -1,5 +1,7 @@
 import sqlalchemy.orm as orm
 
+import targets.models as targets_models
+
 class Base(orm.DeclarativeBase):
     pass
 
@@ -11,6 +13,9 @@ class FundModel(Base):
     replenishment_bottom_limit: orm.Mapped[int | None]
     total_expense_percentage: orm.Mapped[float | None]
     capacity: orm.Mapped[int | None]
+    targets: orm.Mapped[list[targets_models.TargetModel]] = orm.relationship(
+        backref="fund", cascade="all,delete"
+    )
 
     orm.validates("replenishment_bottom_limit", "total_expense_percentage")
     def replenishment_validator(self, key, value):

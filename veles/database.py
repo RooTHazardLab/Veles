@@ -2,9 +2,11 @@ import sqlalchemy
 import sqlalchemy.orm as orm
 
 import funds.models
+import targets.models
 
 BASES = [
-    funds.models.Base.metadata
+    funds.models.Base.metadata,
+    targets.models.Base.metadata
 ]
 
 DBSession = None

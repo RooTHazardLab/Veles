@@ -6,6 +6,13 @@ import funds.schemas as schemas
 
 router = fastapi.APIRouter(prefix='/funds', tags=["funds"])
 
+@router.get("/names")
+async def get_funds_names(
+    db_session=fastapi.Depends(database.get_session)
+) -> list[schemas.FundResponseSchema]:
+    return [fund.name for fund in db_session.query(models.FundModel).all()]
+
+
 @router.get("")
 async def get_funds(
     db_session=fastapi.Depends(database.get_session)
