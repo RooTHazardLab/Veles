@@ -1,25 +1,21 @@
 import sqlalchemy
 import sqlalchemy.orm as orm
 
-import funds.models
-import targets.models
+class Base(orm.DeclarativeBase):
+    pass
 
-BASES = [
-    funds.models.Base.metadata,
-    targets.models.Base.metadata
-]
 
 DBSession = None
+
 
 def connect():
     global DBSession
 
     engine = sqlalchemy.create_engine('sqlite:///veles.sqlite')
 
-    for base_meta in BASES:
-        base_meta.drop_all(engine)
-        base_meta.create_all(engine)
-        base_meta.bind = engine
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(engine)
+    Base.metadata.bind = engine
 
     DBSession = orm.sessionmaker(bind=engine)
 

@@ -1,11 +1,10 @@
 import sqlalchemy.orm as orm
 
+import database
 import targets.models as targets_models
 
-class Base(orm.DeclarativeBase):
-    pass
 
-class FundModel(Base):
+class FundModel(database.Base):
     __tablename__ = "funds"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)

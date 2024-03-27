@@ -1,10 +1,9 @@
 import sqlalchemy
 import sqlalchemy.orm as orm
 
-class Base(orm.DeclarativeBase):
-    pass
+import database
 
-class TargetModel(Base):
+class TargetModel(database.Base):
     __tablename__ = "targets"
 
     id: orm.Mapped[int] = orm.mapped_column(primary_key=True)
